@@ -1,0 +1,16 @@
+html {
+  color: $color-text-primary;
+  font-size: 10px;
+  background-color: $color-background-page;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  padding: 0;
+
+  list-style-type: none;
+}
