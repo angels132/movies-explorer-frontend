@@ -1,19 +1,23 @@
 import React from "react";
 
 export default function NavTab() {
+  const links = [
+    { label: "О проекте", anchor: "#diploma" },
+    { label: "Технологии", anchor: "#technologies" },
+    { label: "Студент", anchor: "#student" },
+  ];
+
   return (
-    <nav className="nav">
-      <ul>
-        <li>
-          <a className="nav__link">О проекте</a>
-        </li>
-        <li>
-          <a className="nav__link">Технологии</a>
-        </li>
-        <li>
-          <a className="nav__link">Студент</a>
-        </li>
+    <nav className="nav-tab">
+      <ul className="list nav-tab__list">
+        {links.map(({ label, anchor }) => (
+          <li key={label}>
+            <a className="link nav-tab__link" href={anchor}>
+              {label}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
-  )
+  );
 }
