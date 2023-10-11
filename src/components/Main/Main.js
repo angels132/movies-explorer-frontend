@@ -1,19 +1,23 @@
 import React from "react";
-
-import Promo from "../Promo/Promo.js";
-import AboutProject from "../AboutProject/AboutProject.js";
-import Techs from "../Techs/Techs.js";
-import AboutMe from "../AboutMe/AboutMe.js";
-import Portfolio from "../Portfolio/Portfolio.js";
-
-export default function Main() {
+import Header from "../Header/Header"; // Импорт Header компонента
+import Cover from "./Promo/Promo"; // Импорт Promo компонента
+import AboutProject from "./AboutProject/AboutProject"; // Импорт AboutProject компонента
+import Techs from "./Techs/Techs"; // Импорт Techs компонента
+import AboutMe from "./AboutMe/AboutMe"; // Импорт AboutMe компонента
+import Footer from "../Footer/Footer"; // Импорт Footer компонента
+const Main = () => {
   return (
-    <main>
-      <Promo />
+    <>
+      <Header />
+      <main>
+      <Cover />
       <AboutProject />
       <Techs />
       <AboutMe />
-      <Portfolio />
-    </main>
-  )
-}
+      </main>
+      <Footer />
+    </>
+  );
+};
+
+export default Main;
