@@ -1,0 +1,14 @@
+@import url(./vendor/normalize.css);
+@import url(./vendor/fonts.css);
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: #202020;
+  max-width: 1280px;
+  margin: 0 auto 0 auto; 
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
