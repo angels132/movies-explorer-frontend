@@ -12,7 +12,7 @@ import films from "../../data/filmsData";
 // Этот компонент представляет собой страницу с фильмами
 const Movies = () => {
   // Создаем состояние для контроля загрузки данных
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
 
   // Возвращаем JSX
   return (

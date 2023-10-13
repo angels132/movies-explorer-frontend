@@ -30,7 +30,7 @@ const AboutProject = () => {
     <section className="about-project" id="about-project">
       <h2 className="about-project__title">О проекте</h2>
       <div className="about-project__line"></div>
-      {width > 767 ? (
+      {width > 450 ? (
         <div className="about-project__info">
           <p className="about-project__subtitle">
             Дипломный проект включал 5 этапов
@@ -64,7 +64,10 @@ const AboutProject = () => {
             соблюдать, чтобы успешно защититься.
           </p>
         </div>
+        
       )}
+
+
       <div className="about-project__timeline">
         <p className="about-project__time about-project__time_type_green">
           1 неделя

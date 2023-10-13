@@ -1,5 +1,6 @@
 // Импортируем React для создания компонентов
 import React from "react";
+import PropTypes from "prop-types";
 
 // Импортируем внешний CSS-файл для стилизации нашего компонента
 import "./MoviesCard.css";
@@ -31,5 +32,16 @@ function MoviesCard({ card, saved }) {
     </li>
   );
 }
+
+MoviesCard.propTypes = {
+  card: PropTypes.shape({
+    saved: PropTypes.bool,
+    nameRU: PropTypes.string,
+    link: PropTypes.string,
+    duration: PropTypes.string, // или .number если duration - это число
+  }).isRequired,
+  saved: PropTypes.bool.isRequired,
+};
+
 // Экспортируем MoviesCard для использования в других файлах
 export default MoviesCard;

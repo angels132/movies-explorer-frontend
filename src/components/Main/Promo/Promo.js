@@ -2,7 +2,7 @@
 import React from "react";
 import "./Promo.css";
 // Импорт компонентов из react-router-dom для создания ссылок.
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 // Импорт компонента NavTab.
 import NavTab from "../NavTab/NavTab";
 

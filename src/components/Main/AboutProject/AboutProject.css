@@ -48,6 +48,7 @@
   line-height: 20px; /* 142.857% */
 }
 
+
 .about-project__timeline {
   margin: 110px 0;
   width: calc(100% - 140px);
@@ -127,10 +128,6 @@
     font-weight: 400;
     line-height: normal;
     letter-spacing: -0.72px;
-  }
-
-  .about-project__subtitle-extra-margin {
-    margin-top: 40px;
   }
 
   .about-project__text {

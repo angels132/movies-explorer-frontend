@@ -4,12 +4,14 @@ import React, { useEffect, useState } from "react";
 // Импортируем CSS стили для MoviesCardList.
 import "./MoviesCardList.css";
 
+import PropTypes from 'prop-types';
+
 // Импортируем компоненты MoviesCard и Preloader.
 import MoviesCard from "../MoviesCard/MoviesCard";
 import Preloader from "../Preloader/Preloader";
 // Определяем функциональный компонент MoviesCardList,
 // который получает списки карточек, состояние "сохранено", и состояние "загружается" в пропс.
-function MoviesCardList({ cards, saved, isLoading }) {
+function MoviesCardList({ cards, isLoading }) {
   const [shownMovies, setShownMovies] = useState(0);
 
   function shownCount() {
@@ -72,5 +74,14 @@ function MoviesCardList({ cards, saved, isLoading }) {
     </section>
   );
 }
+
+MoviesCardList.propTypes = {
+  cards: PropTypes.arrayOf(PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    saved: PropTypes.bool.isRequired,
+  })).isRequired,
+  isLoading: PropTypes.bool.isRequired,
+};
+
 // Экспортируем компонент MoviesCardList.
 export default MoviesCardList;

@@ -85,8 +85,8 @@ const AboutMe = () => {
           rel="noopener noreferrer"
         >
           Статичный сайт
-        </a>
         <div className="about-me__arrow"></div>
+        </a>
       </div>
       <div className="about-me__line about-me__line_type_grey"></div>
       <div className="about-me__app-container">
@@ -97,8 +97,8 @@ const AboutMe = () => {
           rel="noopener noreferrer"
         >
           Адаптивный сайт
-        </a>
         <div className="about-me__arrow"></div>
+        </a>
       </div>
       <div className="about-me__line about-me__line_type_grey"></div>
       <div className="about-me__app-container">
@@ -109,8 +109,8 @@ const AboutMe = () => {
           rel="noopener noreferrer"
         >
           Одностраничное приложение
-        </a>
         <div className="about-me__arrow"></div>
+        </a>
       </div>
     </section>
   );
