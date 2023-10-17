@@ -91,7 +91,7 @@ function App() {
   async function handleLoginSubmit(userData) {
     try {
       const res = await Auth.signIn(userData);
-      localStorage.setItem('jwt', res.token);
+      localStorage.setItem('token', res.token);
       const mainApi = MainApi.getInstance();
       const user = await mainApi.getUserInfo();
       setCurrentUser(user);

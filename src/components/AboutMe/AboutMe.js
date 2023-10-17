@@ -13,7 +13,7 @@ function AboutMe() {
                     <p className="about-me__text">Я родился и живу в Прокопьевске, закончил факультет Экономической безопасности. Я люблю слушать музыку. С 2022 начал кодить. С 2020 работал экономистом.
                         После того, как прошёл курс по веб-разработке, хочу найти новую работу и
                         заниматься делом которое мне нравится.</p>
-                    <a className="about-me__link" href="https://github.com/angeels132">Github</a>
+                    <a className="about-me__link" href="https://github.com/angels132">Github</a>
                 </div>
                 <img className="about-me__photo" src={photo} alt="Фото студента" />
             </div>

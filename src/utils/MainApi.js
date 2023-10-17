@@ -7,7 +7,7 @@ export class MainApi {
         }
         return this._instance ||     (new MainApi({
             baseUrl: 'https://api.miku.nomoredomainsrocks.ru',
-            // baseUrl: 'http://localhost:3000',
+             //baseUrl: 'http://localhost:3000',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${jwt}`
