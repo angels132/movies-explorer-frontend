@@ -5,4 +5,4 @@
 ____
 + ФРОНТЕНД https://miku.nomoredomainsrocks.ru/
 + БЭКЕНД https://api.miku.nomoredomainsrocks.ru/
-+ https://github.com/angels132/movies-explorer-frontend/pull/4
++ PULL REQUESTS https://github.com/angels132/movies-explorer-frontend/pull/4
