@@ -53,7 +53,7 @@ function App() {
 
   //проверка токена
   async function tokenCheck() {
-    const jwt = localStorage.getItem('token');
+    const jwt = localStorage.getItem('jwt');
     if (jwt) {
       try {
         const res = await Auth.checkToken(jwt);
@@ -67,7 +67,7 @@ function App() {
         }
       } catch (err) {
         setLoggedIn(false);
-        localStorage.removeItem('token');
+        localStorage.removeItem('jwt');
         console.error(err);
       }
     }
@@ -91,7 +91,7 @@ function App() {
   async function handleLoginSubmit(userData) {
     try {
       const res = await Auth.signIn(userData);
-      localStorage.setItem('token', res.token);
+      localStorage.setItem('jwt', res.token);
       const mainApi = MainApi.getInstance();
       const user = await mainApi.getUserInfo();
       setCurrentUser(user);
@@ -106,8 +106,12 @@ function App() {
 
   //выйти из аккаунта
   function handleSignOutSubmit() {
-    localStorage.clear();
-    localStorage.removeItem('token');
+    localStorage.removeItem('searchedMovies');
+    localStorage.removeItem('inputMovies');
+    localStorage.removeItem('shortsActive');
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('savedMovies');
+    localStorage.removeItem('allMovies');
     setCurrentUser({});
     setLoggedIn(false);
     setSavedMovies([]);

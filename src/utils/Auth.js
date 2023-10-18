@@ -1,6 +1,5 @@
 export const BASE_URL = "https://api.miku.nomoredomainsrocks.ru";
-// export const BASE_URL = 'http://localhost:3000';
-
+ //export const BASE_URL = 'http://localhost:3000';
 
 const getJson = async (res) => {
     if (res.ok) {
@@ -30,6 +29,7 @@ export const signUp = (userData) => {
     return fetch(`${BASE_URL}/signup`, {
         method: "POST",
         headers: {
+            "Accept": "application/json",
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ 

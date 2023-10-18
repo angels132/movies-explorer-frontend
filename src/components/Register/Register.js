@@ -29,7 +29,7 @@ function Register(props) {
   };
 
   const isEmailValid = (email) => {
-    const emailRegex = /.+@.+\..+/;
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9-]+\.[A-Z]{2,4}$/i;
     return emailRegex.test(email);
   };
 
