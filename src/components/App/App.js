@@ -53,7 +53,7 @@ function App() {
 
   //проверка токена
   async function tokenCheck() {
-    const jwt = localStorage.getItem('jwt');
+    const jwt = localStorage.getItem('token');
     if (jwt) {
       try {
         const res = await Auth.checkToken(jwt);
@@ -67,7 +67,7 @@ function App() {
         }
       } catch (err) {
         setLoggedIn(false);
-        localStorage.removeItem('jwt');
+        localStorage.removeItem('token');
         console.error(err);
       }
     }
@@ -106,12 +106,8 @@ function App() {
 
   //выйти из аккаунта
   function handleSignOutSubmit() {
-    localStorage.removeItem('searchedMovies');
-    localStorage.removeItem('inputMovies');
-    localStorage.removeItem('shortsActive');
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('savedMovies');
-    localStorage.removeItem('allMovies');
+    localStorage.clear();
+    localStorage.removeItem('token');
     setCurrentUser({});
     setLoggedIn(false);
     setSavedMovies([]);

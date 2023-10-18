@@ -30,7 +30,6 @@ export const signUp = (userData) => {
     return fetch(`${BASE_URL}/signup`, {
         method: "POST",
         headers: {
-            "Accept": "application/json",
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ 
