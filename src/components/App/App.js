@@ -52,17 +52,23 @@ function App() {
   }
 
   //проверка токена
-  async function tokenCheck() {
+  const tokenCheckAndFetchMovies = async () => {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
       try {
         const res = await Auth.checkToken(jwt);
-
+    
         if (res) {
           const mainApi = MainApi.getInstance();
           const userData = await mainApi.getUserInfo();
           setCurrentUser(userData);
           setLoggedIn(true);
+
+          // Добавьте этот блок кода ниже
+          const movies = await moviesApi.getInitialMovies();
+          localStorage.setItem('allMovies', JSON.stringify(movies));
+          setMovies(movies);
+
           return;
         }
       } catch (err) {
@@ -72,14 +78,41 @@ function App() {
       }
     }
     setLoggedIn(false);
-
   }
+
+  useEffect(() => {
+    tokenCheckAndFetchMovies();
+  }, []);
+
+  // async function tokenCheck() {
+  //   const jwt = localStorage.getItem('jwt');
+  //   if (jwt) {
+  //     try {
+  //       const res = await Auth.checkToken(jwt);
+
+  //       if (res) {
+  //         const mainApi = MainApi.getInstance();
+  //         const userData = await mainApi.getUserInfo();
+  //         setCurrentUser(userData);
+  //         setLoggedIn(true);
+  //         return;
+  //       }
+  //     } catch (err) {
+  //       setLoggedIn(false);
+  //       localStorage.removeItem('jwt');
+  //       console.error(err);
+  //     }
+  //   }
+  //   setLoggedIn(false);
+
+  // }
 
   //регистрация
   async function handleRegisterSubmit(userData) {
     try {
       await Auth.signUp(userData);
       await handleLoginSubmit(userData);
+      await tokenCheckAndFetchMovies(); // добавлено ожидание получения фильмов из API
     } catch (err) {
       setErrorPopup(true);
       setErrorText(`${err}`);
@@ -88,6 +121,7 @@ function App() {
   }
 
   //авторизация
+
   async function handleLoginSubmit(userData) {
     try {
       const res = await Auth.signIn(userData);
@@ -96,6 +130,10 @@ function App() {
       const user = await mainApi.getUserInfo();
       setCurrentUser(user);
       setLoggedIn(true);
+      await tokenCheckAndFetchMovies(); // добавлено ожидание получения фильмов из API
+      const storedMovies = JSON.parse(localStorage.getItem('allMovies'));
+
+      setMovies(storedMovies);
       navigate('/movies', { replace: true });
     } catch (err) {
       setErrorPopup(true);
@@ -103,6 +141,22 @@ function App() {
       console.log(err);
     }
   }
+
+  // async function handleLoginSubmit(userData) {
+  //   try {
+  //     const res = await Auth.signIn(userData);
+  //     localStorage.setItem('jwt', res.token);
+  //     const mainApi = MainApi.getInstance();
+  //     const user = await mainApi.getUserInfo();
+  //     setCurrentUser(user);
+  //     setLoggedIn(true);
+  //     navigate('/movies', { replace: true });
+  //   } catch (err) {
+  //     setErrorPopup(true);
+  //     setErrorText(`${err}`);
+  //     console.log(err);
+  //   }
+  // }
 
   //выйти из аккаунта
   function handleSignOutSubmit() {
@@ -214,13 +268,20 @@ function App() {
   }, [savedMovies]);
 
   useEffect(() => {
-    tokenCheck();
+    tokenCheckAndFetchMovies();
   }, []);
 
+  // function searchBy(movies, keyword) {
+  //   const key = new RegExp(keyword, 'gi');
+  //   return movies.filter(
+  //     (item) => key.test(item.nameRU) || key.test(item.nameEN)
+  //   );
+  // }
+
   function searchBy(movies, keyword) {
-    const key = new RegExp(keyword, 'gi');
+    keyword = keyword.toLowerCase();
     return movies.filter(
-      (item) => key.test(item.nameRU) || key.test(item.nameEN)
+      (item) => item.nameRU.toLowerCase().includes(keyword) || item.nameEN.toLowerCase().includes(keyword)
     );
   }
 

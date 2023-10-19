@@ -20,16 +20,19 @@ function MoviesCardList({ isLoading, onSaveClick, movies, onDeleteClick, setErro
         }
     }
 
-
     useEffect(() => {
         function handleResize() {
             const screenWidth = window.innerWidth;
-            if (screenWidth >= 1280) {
-                setVisibleCards(12)
-            } else if (screenWidth >= 768 && screenWidth < 1150) {
-                setVisibleCards(8)
-            } else if (screenWidth >= 320 && screenWidth < 768) {
-                setVisibleCards(5)
+            if (location.pathname === "/saved-movies") {
+                setVisibleCards(movies.length);
+            } else {
+                if (screenWidth >= 1280) {
+                    setVisibleCards(12)
+                } else if (screenWidth >= 768 && screenWidth < 1150) {
+                    setVisibleCards(8)
+                } else if (screenWidth >= 320 && screenWidth < 768) {
+                    setVisibleCards(5)
+                }
             }
         }
         window.addEventListener("resize", handleResize);
@@ -37,7 +40,25 @@ function MoviesCardList({ isLoading, onSaveClick, movies, onDeleteClick, setErro
         return () => {
             window.removeEventListener("resize", handleResize);
         }
-    }, [isLoading]);
+    }, [isLoading, location.pathname, movies.length]);
+
+    // useEffect(() => {
+    //     function handleResize() {
+    //         const screenWidth = window.innerWidth;
+    //         if (screenWidth >= 1280) {
+    //             setVisibleCards(12)
+    //         } else if (screenWidth >= 768 && screenWidth < 1150) {
+    //             setVisibleCards(8)
+    //         } else if (screenWidth >= 320 && screenWidth < 768) {
+    //             setVisibleCards(5)
+    //         }
+    //     }
+    //     window.addEventListener("resize", handleResize);
+    //     handleResize()
+    //     return () => {
+    //         window.removeEventListener("resize", handleResize);
+    //     }
+    // }, [isLoading]);
 
     return (
         <div className="movies">
@@ -46,9 +67,10 @@ function MoviesCardList({ isLoading, onSaveClick, movies, onDeleteClick, setErro
             ) : (
                 (movies && movies.length > 0) ?
                     <div className="movies__card-list">
-                        {movies.slice(0, visibleCards).map((movie) => (
+                        {movies.slice(0, visibleCards).map((movie, index) => (
                             <MoviesCard
-                                key={movie.id}
+                                key={`${movie.id}-${index}`}
+                                // key={movie.id}
                                 movie={movie}
                                 onSaveClick={onSaveClick}
                                 onDeleteClick={onDeleteClick}

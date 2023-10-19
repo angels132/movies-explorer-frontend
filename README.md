@@ -2,6 +2,6 @@
 
 ### Вариант макета dark-2
 
-[Ссылка на pull request ->](https://github.com/)
+[Ссылка на pull request ->](https://github.com/angels132/movies-explorer-frontend/pull/5)
 
 [Ссылка на задеплоенный на сервере проект ->](https://miku.nomoredomainsrocks.ru)
