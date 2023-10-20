@@ -12,35 +12,55 @@ function MoviesCardList({ isLoading, onSaveClick, movies, onDeleteClick, setErro
     function moreCrads() {
         const screenWidth = window.innerWidth;
         if (screenWidth >= 1280) {
-            setVisibleCards((prevVisibleCards) => prevVisibleCards + 3)
-        } else if (screenWidth >= 768 && screenWidth < 1150) {
-            setVisibleCards((prevVisibleCards) => prevVisibleCards + 2)
-        } else if (screenWidth >= 320 && screenWidth < 768) {
-            setVisibleCards((prevVisibleCards) => prevVisibleCards + 2)
+          setVisibleCards((prevVisibleCards) => prevVisibleCards + 3);
+        } else if (screenWidth > 768 && screenWidth < 1280) {
+          setVisibleCards((prevVisibleCards) => prevVisibleCards + 2);
+        } else if (screenWidth <= 768) {
+          setVisibleCards((prevVisibleCards) => prevVisibleCards + 2);
         }
-    }
+      }
+
+ 
 
     useEffect(() => {
         function handleResize() {
-            const screenWidth = window.innerWidth;
-            if (location.pathname === "/saved-movies") {
-                setVisibleCards(movies.length);
-            } else {
-                if (screenWidth >= 1280) {
-                    setVisibleCards(12)
-                } else if (screenWidth >= 768 && screenWidth < 1150) {
-                    setVisibleCards(8)
-                } else if (screenWidth >= 320 && screenWidth < 768) {
-                    setVisibleCards(5)
-                }
-            }
+          const screenWidth = window.innerWidth;
+          if (screenWidth >= 1280) {
+            setVisibleCards(12);
+          } else if (screenWidth >= 768 && screenWidth < 1280 ) {
+            setVisibleCards(8);
+          } else if (screenWidth < 768) {
+            setVisibleCards(5);
+          }
         }
         window.addEventListener("resize", handleResize);
-        handleResize()
+        handleResize();
         return () => {
-            window.removeEventListener("resize", handleResize);
+          window.removeEventListener("resize", handleResize);
         }
-    }, [isLoading, location.pathname, movies.length]);
+      }, [location.pathname]);
+
+    // useEffect(() => {
+    //     function handleResize() {
+    //         const screenWidth = window.innerWidth;
+    //         if (location.pathname === "/saved-movies") {
+    //             setVisibleCards(movies.length);
+    //         } else {
+    //             if (screenWidth >= 1280) {
+    //                 setVisibleCards(12)
+    //             } else if (screenWidth >= 768 && screenWidth < 1150) {
+    //                 setVisibleCards(8)
+    //             } else if (screenWidth >= 320 && screenWidth < 768) {
+    //                 setVisibleCards(5)
+    //             }
+    //         }
+    //     }
+    //     window.addEventListener("resize", handleResize);
+    //     handleResize()
+    //     return () => {
+    //         window.removeEventListener("resize", handleResize);
+    //     }
+    // }, [isLoading, location.pathname, movies.length]);
 
     // useEffect(() => {
     //     function handleResize() {

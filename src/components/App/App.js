@@ -34,6 +34,8 @@ function App() {
   const [isLoadingMovies, setLoadingMovies] = useState(false);
   const [isLoadingSavedMovies, setLoadingSavedMovies] = useState(false);
   const [savedShortsActive, setSavedShortsActive] = useState(false);
+  const [shortFilms, setShortFilms] = useState([]); 
+
 
   const [currentUser, setCurrentUser] = useState();
 
@@ -247,9 +249,26 @@ function App() {
   };
 
   //фильтрация фильмов по времени "короткометражки"
+  // function filterShorts(movies, state) {
+  //   return state ? movies?.filter((movie) => movie.duration <= 40) : movies;
+  // }
+
   function filterShorts(movies, state) {
-    return state ? movies?.filter((movie) => movie.duration <= 40) : movies;
+    if (movies) {
+        return state ? movies?.filter((movie) => movie.duration <= 40) : movies;
+    }
+    return [];
+}
+
+///////
+useEffect(() => {
+  if (shortsActive) {
+  const filteredMovies = movies.filter(movie => movie.duration <= 40);
+  setShortFilms(filteredMovies);
+  } else {
+  setShortFilms(movies);
   }
+  }, [shortsActive, movies]);
 
   //сортировка понравившехся фильмов
   function sortMovies(movies, savedMovies) {
@@ -380,44 +399,45 @@ function App() {
           }
         />
 
-        <Route
-          path="/movies"
-          element={
-            <ProtectedRoute
-              element={Movies}
-              loggedIn={isLoggedIn}
-              isLoading={isLoadingMovies}
-              movies={movies}
-              onSaveClick={handleSaveMovie}
-              onDeleteClick={handleDeleteMovie}
-              onToggleClick={handleToggleClick}
-              shortsActive={shortsActive}
-              onSubmit={handleSearchMovies}
-              setErrorPopup={setErrorPopup}
-              setErrorText={setErrorText}
-            />
-          }
-        />
+<Route
+  path="/movies"
+  element={
+    <ProtectedRoute
+      element={Movies}
+      loggedIn={isLoggedIn}
+      isLoading={isLoadingMovies}
+      movies={shortFilms} //Отправьте shortFilms вместо movies
+      onSaveClick={handleSaveMovie}
+      onDeleteClick={handleDeleteMovie}
+      onToggleClick={handleToggleClick}
+      shortsActive={shortsActive}
+      onSubmit={handleSearchMovies}
+      setErrorPopup={setErrorPopup}
+      setErrorText={setErrorText}
+    />
+  }
+/>
 
-        <Route
-          path="/saved-movies"
-          element={
-            <ProtectedRoute
-              element={SavedMovies}
-              loggedIn={isLoggedIn}
-              setSavedMovies={setSavedMovies}
-              savedMovies={savedMovies}
-              isLoading={isLoadingSavedMovies}
-              setLoadingSavedMovies={setLoadingSavedMovies}
-              onDeleteClick={handleDeleteMovie}
-              onToggleClick={handleToggleClick}
-              shortsActive={savedShortsActive}
-              setErrorPopup={setErrorPopup}
-              setErrorText={setErrorText}
-              onSubmit={handleSearchMovies}
-            />
-          }
-        />
+
+<Route
+  path="/saved-movies"
+  element={
+    <ProtectedRoute
+      element={SavedMovies}
+      loggedIn={isLoggedIn}
+      savedMovies={savedMovies.filter(movie => !savedShortsActive || movie.duration <= 40)} // Only pass short films if short film setting is active
+      isLoading={isLoadingSavedMovies}
+      setLoadingSavedMovies={setLoadingSavedMovies}
+      onDeleteClick={handleDeleteMovie}
+      onToggleClick={handleToggleClick}
+      shortsActive={savedShortsActive} // Pass the short film setting state
+      setErrorPopup={setErrorPopup}
+      setErrorText={setErrorText}
+      onSubmit={handleSearchMovies}
+      setSavedMovies={setSavedMovies} // Ensure you pass setSavedMovies prop here
+    />
+  }
+/>
 
         <Route
           path="/profile"
