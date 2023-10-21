@@ -1,119 +1,128 @@
-import React from "react";
+import React from 'react';
 import './MoviesCardList.css';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import { useLocation } from 'react-router-dom';
-import Preloader from '../../components/Preloader/Preloader'
+import Preloader from '../../components/Preloader/Preloader';
 import { useState, useEffect } from 'react';
 
-function MoviesCardList({ isLoading, onSaveClick, movies, onDeleteClick, setErrorPopup, setErrorText, isSearched }) {
-    const location = useLocation();
-    const [visibleCards, setVisibleCards] = useState(12);
+function MoviesCardList({
+  isLoading,
+  onSaveClick,
+  movies,
+  onDeleteClick,
+  setErrorPopup,
+  setErrorText,
+  isSearched,
+}) {
+  const location = useLocation();
+  const [visibleCards, setVisibleCards] = useState(12);
 
-    function moreCrads() {
-        const screenWidth = window.innerWidth;
-        if (screenWidth >= 1280) {
-          setVisibleCards((prevVisibleCards) => prevVisibleCards + 3);
-        } else if (screenWidth > 768 && screenWidth < 1280) {
-          setVisibleCards((prevVisibleCards) => prevVisibleCards + 2);
-        } else if (screenWidth <= 768) {
-          setVisibleCards((prevVisibleCards) => prevVisibleCards + 2);
-        }
+  function moreCrads() {
+    const screenWidth = window.innerWidth;
+    if (screenWidth >= 1151) {
+      setVisibleCards((prevVisibleCards) => prevVisibleCards + 3);
+    } else if (screenWidth > 711 && screenWidth < 1151) {
+      setVisibleCards((prevVisibleCards) => prevVisibleCards + 2);
+    } else if (screenWidth <= 711) {
+      setVisibleCards((prevVisibleCards) => prevVisibleCards + 2);
+    }
+  }
+
+  useEffect(() => {
+    function handleResize() {
+      const screenWidth = window.innerWidth;
+      if (screenWidth >= 1151) {
+        setVisibleCards(12);
+      } else if (screenWidth >= 711 && screenWidth < 1151) {
+        setVisibleCards(8);
+      } else if (screenWidth < 711) {
+        setVisibleCards(5);
       }
+    }
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [location.pathname]);
 
- 
+  // useEffect(() => {
+  //     function handleResize() {
+  //         const screenWidth = window.innerWidth;
+  //         if (location.pathname === "/saved-movies") {
+  //             setVisibleCards(movies.length);
+  //         } else {
+  //             if (screenWidth >= 1280) {
+  //                 setVisibleCards(12)
+  //             } else if (screenWidth >= 768 && screenWidth < 1150) {
+  //                 setVisibleCards(8)
+  //             } else if (screenWidth >= 320 && screenWidth < 768) {
+  //                 setVisibleCards(5)
+  //             }
+  //         }
+  //     }
+  //     window.addEventListener("resize", handleResize);
+  //     handleResize()
+  //     return () => {
+  //         window.removeEventListener("resize", handleResize);
+  //     }
+  // }, [isLoading, location.pathname, movies.length]);
 
-    useEffect(() => {
-        function handleResize() {
-          const screenWidth = window.innerWidth;
-          if (screenWidth >= 1280) {
-            setVisibleCards(12);
-          } else if (screenWidth >= 768 && screenWidth < 1280 ) {
-            setVisibleCards(8);
-          } else if (screenWidth < 768) {
-            setVisibleCards(5);
-          }
-        }
-        window.addEventListener("resize", handleResize);
-        handleResize();
-        return () => {
-          window.removeEventListener("resize", handleResize);
-        }
-      }, [location.pathname]);
+  // useEffect(() => {
+  //     function handleResize() {
+  //         const screenWidth = window.innerWidth;
+  //         if (screenWidth >= 1280) {
+  //             setVisibleCards(12)
+  //         } else if (screenWidth >= 768 && screenWidth < 1150) {
+  //             setVisibleCards(8)
+  //         } else if (screenWidth >= 320 && screenWidth < 768) {
+  //             setVisibleCards(5)
+  //         }
+  //     }
+  //     window.addEventListener("resize", handleResize);
+  //     handleResize()
+  //     return () => {
+  //         window.removeEventListener("resize", handleResize);
+  //     }
+  // }, [isLoading]);
 
-    // useEffect(() => {
-    //     function handleResize() {
-    //         const screenWidth = window.innerWidth;
-    //         if (location.pathname === "/saved-movies") {
-    //             setVisibleCards(movies.length);
-    //         } else {
-    //             if (screenWidth >= 1280) {
-    //                 setVisibleCards(12)
-    //             } else if (screenWidth >= 768 && screenWidth < 1150) {
-    //                 setVisibleCards(8)
-    //             } else if (screenWidth >= 320 && screenWidth < 768) {
-    //                 setVisibleCards(5)
-    //             }
-    //         }
-    //     }
-    //     window.addEventListener("resize", handleResize);
-    //     handleResize()
-    //     return () => {
-    //         window.removeEventListener("resize", handleResize);
-    //     }
-    // }, [isLoading, location.pathname, movies.length]);
-
-    // useEffect(() => {
-    //     function handleResize() {
-    //         const screenWidth = window.innerWidth;
-    //         if (screenWidth >= 1280) {
-    //             setVisibleCards(12)
-    //         } else if (screenWidth >= 768 && screenWidth < 1150) {
-    //             setVisibleCards(8)
-    //         } else if (screenWidth >= 320 && screenWidth < 768) {
-    //             setVisibleCards(5)
-    //         }
-    //     }
-    //     window.addEventListener("resize", handleResize);
-    //     handleResize()
-    //     return () => {
-    //         window.removeEventListener("resize", handleResize);
-    //     }
-    // }, [isLoading]);
-
-    return (
-        <div className="movies">
-            {isLoading ? (
-                <Preloader />
-            ) : (
-                (movies && movies.length > 0) ?
-                    <div className="movies__card-list">
-                        {movies.slice(0, visibleCards).map((movie, index) => (
-                            <MoviesCard
-                                key={`${movie.id}-${index}`}
-                                // key={movie.id}
-                                movie={movie}
-                                onSaveClick={onSaveClick}
-                                onDeleteClick={onDeleteClick}
-                                setErrorPopup={setErrorPopup}
-                                setErrorText={setErrorText}
-                            />
-                        ))}
-                    </div>
-                    :
-                    (isSearched && movies.length==0) && <h2 className="movies__no-movies-title">Ничего не найдено</h2>
-            )}
-            {movies && movies.length > visibleCards && !isLoading && (
-                <div className="more">
-                    {location.pathname === "/movies" &&
-                        <button onClick={moreCrads} className="more__button">Еще</button>
-                    }
-                    {location.pathname === "/saved-movies" &&
-                        <div className="more__saved-movies"></div>
-                    }
-                </div>
-            )}
+  return (
+    <div className='movies'>
+      {isLoading ? (
+        <Preloader />
+      ) : movies && movies.length > 0 ? (
+        <div className='movies__card-list'>
+          {movies.slice(0, visibleCards).map((movie, index) => (
+            <MoviesCard
+              key={movie.id || movie._id}
+              // key={movie.id}
+              movie={movie}
+              onSaveClick={onSaveClick}
+              onDeleteClick={onDeleteClick}
+              setErrorPopup={setErrorPopup}
+              setErrorText={setErrorText}
+            />
+          ))}
         </div>
-    );
+      ) : (
+        isSearched && (
+          <h2 className='movies__no-movies-title'>Ничего не найдено</h2>
+        )
+      )}
+      {movies && movies.length > visibleCards && !isLoading && (
+        <div className='more'>
+          {location.pathname === '/movies' && (
+            <button onClick={moreCrads} className='more__button'>
+              Еще
+            </button>
+          )}
+          {location.pathname === '/saved-movies' && (
+            <div className='more__saved-movies'></div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default MoviesCardList;

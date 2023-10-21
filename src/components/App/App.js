@@ -14,7 +14,7 @@ import Login from '../Login/Login';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import InfoTooltip from '../infoTooltip/InfoTooltip';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
-import NotAuthorizedRoute from '../NotAuthorizedRoute/NotAuthorizedRoute'
+import NotAuthorizedRoute from '../NotAuthorizedRoute/NotAuthorizedRoute';
 //api
 import { MainApi } from '../../utils/MainApi';
 import moviesApi from '../../utils/MoviesApi';
@@ -25,22 +25,23 @@ import errorImage from '../../images/error-image.svg';
 import Preloader from '../Preloader/Preloader';
 
 function App() {
-
   const [isLoggedIn, setLoggedIn] = useState(1);
   const [isSucessPopup, setSuccesPopup] = useState(false);
   const [isErrorPopup, setErrorPopup] = useState(false);
   const [shortsActive, setShortsActive] = useState(
-    JSON.parse(localStorage.getItem('shortsActive') || 'false'));
+    JSON.parse(localStorage.getItem('shortsActive') || 'false')
+  );
   const [isLoadingMovies, setLoadingMovies] = useState(false);
   const [isLoadingSavedMovies, setLoadingSavedMovies] = useState(false);
   const [savedShortsActive, setSavedShortsActive] = useState(false);
-  const [shortFilms, setShortFilms] = useState([]); 
-
+  const [shortFilms, setShortFilms] = useState([]);
 
   const [currentUser, setCurrentUser] = useState();
 
   const [movies, setMovies] = useState([]);
   const [savedMovies, setSavedMovies] = useState([]);
+  const [savedShortFilms, setSavedShortFilms] = useState(savedMovies);
+  const [keyword, setKeyword] = useState('');
 
   const [successText, setSuccessText] = useState('Успешно!');
   const [errorText, setErrorText] = useState('Ошибка!');
@@ -59,15 +60,15 @@ function App() {
     if (jwt) {
       try {
         const res = await Auth.checkToken(jwt);
-    
+
         if (res) {
           const mainApi = MainApi.getInstance();
           const userData = await mainApi.getUserInfo();
           setCurrentUser(userData);
           setLoggedIn(true);
 
-          const movies = await moviesApi.getInitialMovies();
-          localStorage.setItem('allMovies', JSON.stringify(movies));
+          //   const movies = await moviesApi.getInitialMovies();
+          //   localStorage.setItem('allMovies', JSON.stringify(movies));
 
           return;
         }
@@ -78,7 +79,7 @@ function App() {
       }
     }
     setLoggedIn(false);
-  }
+  };
 
   useEffect(() => {
     tokenCheckAndFetchMovies();
@@ -170,7 +171,8 @@ function App() {
     setLoggedIn(false);
     setSavedMovies([]);
     setMovies([]);
-    setShortsActive(false)
+    setShortsActive(false);
+    setIsSearched(false);
     navigate('/', { replace: true });
   }
 
@@ -188,7 +190,6 @@ function App() {
       setErrorText(`Ошибка ${err}`);
       console.log(err);
     }
-
   }
 
   //добовляем понравившийся фильм
@@ -212,17 +213,18 @@ function App() {
       const mainApi = MainApi.getInstance();
 
       if (location.pathname === '/movies') {
-        const selectMovie = savedMovies.find(m => m.movieId === movie.id);
+        const selectMovie = savedMovies.find((m) => m.movieId === movie.id);
 
         await mainApi.deleteMovie(selectMovie._id);
-        const updateMovies = savedMovies.slice()
-          .filter(m => m._id !== selectMovie._id);
+        const updateMovies = savedMovies
+          .slice()
+          .filter((m) => m._id !== selectMovie._id);
 
         localStorage.setItem('savedMovies', JSON.stringify(updateMovies));
         setSavedMovies(updateMovies);
       } else if (location.pathname === '/saved-movies') {
         await mainApi.deleteMovie(movie._id);
-        const updateMovies = savedMovies.slice().filter(m => m !== movie);
+        const updateMovies = savedMovies.slice().filter((m) => m !== movie);
 
         localStorage.setItem('savedMovies', JSON.stringify(updateMovies));
         setSavedMovies(updateMovies);
@@ -243,7 +245,6 @@ function App() {
     } else if (location.pathname === '/saved-movies') {
       setSavedShortsActive(!savedShortsActive);
     }
-
   };
 
   //фильтрация фильмов по времени "короткометражки"
@@ -253,24 +254,37 @@ function App() {
 
   function filterShorts(movies, state) {
     if (movies) {
-        return state ? movies?.filter((movie) => movie.duration <= 40) : movies;
+      return state ? movies?.filter((movie) => movie.duration <= 40) : movies;
     }
     return [];
-}
-
-///////
-useEffect(() => {
-  if (shortsActive) {
-  const filteredMovies = movies.filter(movie => movie.duration <= 40);
-  setShortFilms(filteredMovies);
-  } else {
-  setShortFilms(movies);
   }
+
+  ///////
+  useEffect(() => {
+    if (shortsActive) {
+      const filteredMovies = movies.filter((movie) => movie.duration <= 40);
+      setShortFilms(filteredMovies);
+    } else {
+      setShortFilms(movies);
+    }
   }, [shortsActive, movies]);
+
+  useEffect(() => {
+    if (savedShortsActive) {
+      const filteredMovies = searchBy(savedMovies, keyword).filter(
+        (movie) => movie.duration <= 40
+      );
+      setSavedShortFilms(filteredMovies);
+    } else {
+      setSavedShortFilms(searchBy(savedMovies, keyword));
+    }
+  }, [savedShortsActive, savedMovies]);
 
   //сортировка понравившехся фильмов
   function sortMovies(movies, savedMovies) {
-    const saveUserMovies = JSON.parse(localStorage.getItem('savedMovies') || "[]") ;
+    const saveUserMovies = JSON.parse(
+      localStorage.getItem('savedMovies') || '[]'
+    );
     return movies?.map((movie) => {
       movie.isAdded = saveUserMovies.some(
         (savedMovies) => savedMovies.movieId === movie.id
@@ -298,11 +312,13 @@ useEffect(() => {
   function searchBy(movies, keyword) {
     keyword = keyword.toLowerCase();
     return movies.filter(
-      (item) => item.nameRU.toLowerCase().includes(keyword) || item.nameEN.toLowerCase().includes(keyword)
+      (item) =>
+        item.nameRU.toLowerCase().includes(keyword) ||
+        item.nameEN.toLowerCase().includes(keyword)
     );
   }
 
-//поиск фильмов
+  //поиск фильмов
   // async function handleSearchMovies(keyword) {
   //   try {
   //     if (location.pathname === '/movies') {
@@ -329,34 +345,48 @@ useEffect(() => {
   // }
   const [isSearched, setIsSearched] = useState(false);
 
-async function handleSearchMovies(keyword) {
+  async function handleSearchMovies(keyword) {
+    console.log(keyword);
     try {
-        if (location.pathname === '/movies') {
-            setLoadingMovies(true);
-            await new Promise(resolve => setTimeout(resolve, 2000)); // для проверки загрузки preloader`a
-            const allMovies = JSON.parse(localStorage.getItem('allMovies'));
-            const findMovies = searchBy(allMovies, keyword);
-            const sortedMovies = sortMovies(findMovies, savedMovies);
-            const filteredMovies = filterShorts(sortedMovies, shortsActive);
-            localStorage.setItem('searchedMovies', JSON.stringify(filteredMovies));
-            setMovies((filteredMovies) || []);
-            setLoadingMovies(false);
-        } else if (location.pathname === '/saved-movies') {
-            setLoadingSavedMovies(true);
-            const saveUserMovies = JSON.parse(localStorage.getItem('savedMovies'));
-            const findMovies = searchBy(saveUserMovies, keyword);
-            setSavedMovies(filterShorts(findMovies, savedShortsActive) || []);
-            setLoadingSavedMovies(false);
+      if (location.pathname === '/movies') {
+        if (!localStorage.getItem('allMovies')) {
+          try {
+            const moviesAll = await moviesApi.getInitialMovies();
+            setMovies(moviesAll);
+            setLoggedIn(true);
+            keyword = keyword.toLowerCase();
+          } catch (err) {
+            setErrorPopup(true);
+            setErrorText(`${err}`);
+            console.log(err);
+          }
         }
+        setLoadingMovies(true);
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // для проверки загрузки preloader`a
+        const allMovies = JSON.parse(localStorage.getItem('allMovies'));
+        const findMovies = searchBy(allMovies, keyword);
+        sortMovies(findMovies, savedMovies);
+        const filteredMovies = filterShorts(findMovies, shortsActive);
+        localStorage.setItem('searchedMovies', JSON.stringify(findMovies));
+        setMovies(filteredMovies || []);
+        setLoadingMovies(false);
+      } else if (location.pathname === '/saved-movies') {
+        setKeyword(keyword);
+        setLoadingSavedMovies(true);
+        const saveUserMovies = JSON.parse(localStorage.getItem('savedMovies'));
+        const findMovies = searchBy(saveUserMovies, keyword);
+        console.log(findMovies);
+        setSavedShortFilms(findMovies || []);
+        setLoadingSavedMovies(false);
+      }
     } catch (err) {
-        setErrorPopup(true);
-        setErrorText(`${err}`);
-        console.log(err);
+      setErrorPopup(true);
+      setErrorText(`${err}`);
+      console.log(err);
     } finally {
-    setIsSearched(true); // Добавлено в finally, чтобы обрабатывать и успешные, и неудачные запросы
-}
-
-}
+      setIsSearched(true); // Добавлено в finally, чтобы обрабатывать и успешные, и неудачные запросы
+    }
+  }
 
   useEffect(() => {
     //TODO try catch
@@ -369,16 +399,17 @@ async function handleSearchMovies(keyword) {
           const userMovies = savedMovies;
           localStorage.setItem('savedMovies', JSON.stringify(userMovies));
           const keyword = JSON.parse(
-            localStorage.getItem('inputMovies') || '""')
+            localStorage.getItem('inputMovies') || '""'
+          );
           setSavedMovies(userMovies);
 
           if (localStorage.getItem('searchedMovies')) {
-
             const searchMovies = JSON.parse(
-              localStorage.getItem('searchedMovies'));
+              localStorage.getItem('searchedMovies')
+            );
             const assortMovies = sortMovies(searchMovies, userMovies);
             const filtrateMovies = filterShorts(assortMovies, shortsActive);
-            const searchedMovies = searchBy(filtrateMovies,keyword)
+            const searchedMovies = searchBy(filtrateMovies, keyword);
             setMovies(searchedMovies);
           }
           setLoadingMovies(false);
@@ -391,22 +422,17 @@ async function handleSearchMovies(keyword) {
     } else if (isLoggedIn === false) {
       handleSignOutSubmit();
     }
-  }, [isLoggedIn, shortsActive, shortsActive, savedShortsActive]);
+  }, [isLoggedIn, shortsActive, savedShortsActive]);
 
-  return isLoggedIn === 1 ? <Preloader/> : (
+  return isLoggedIn === 1 ? (
+    <Preloader />
+  ) : (
     <CurrentUserContext.Provider value={currentUser}>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Main
-              loggedIn={isLoggedIn}
-            />
-          }
-        />
+        <Route path='/' element={<Main loggedIn={isLoggedIn} />} />
 
         <Route
-          path="/signup"
+          path='/signup'
           element={
             <NotAuthorizedRoute
               element={Register}
@@ -417,7 +443,7 @@ async function handleSearchMovies(keyword) {
         />
 
         <Route
-          path="/signin"
+          path='/signin'
           element={
             <NotAuthorizedRoute
               element={Login}
@@ -427,48 +453,53 @@ async function handleSearchMovies(keyword) {
           }
         />
 
-<Route
-  path="/movies"
-  element={
-    <ProtectedRoute
-      element={Movies}
-      loggedIn={isLoggedIn}
-      isLoading={isLoadingMovies}
-      movies={shortFilms} //Отправьте shortFilms вместо movies
-      onSaveClick={handleSaveMovie}
-      onDeleteClick={handleDeleteMovie}
-      onToggleClick={handleToggleClick}
-      shortsActive={shortsActive}
-      onSubmit={handleSearchMovies}
-      setErrorPopup={setErrorPopup}
-      setErrorText={setErrorText}
-    />
-  }
-/>
-
-
-<Route
-  path="/saved-movies"
-  element={
-    <ProtectedRoute
-      element={SavedMovies}
-      loggedIn={isLoggedIn}
-      savedMovies={savedMovies.filter(movie => !savedShortsActive || movie.duration <= 40)} // Only pass short films if short film setting is active
-      isLoading={isLoadingSavedMovies}
-      setLoadingSavedMovies={setLoadingSavedMovies}
-      onDeleteClick={handleDeleteMovie}
-      onToggleClick={handleToggleClick}
-      shortsActive={savedShortsActive} // Pass the short film setting state
-      setErrorPopup={setErrorPopup}
-      setErrorText={setErrorText}
-      onSubmit={handleSearchMovies}
-      setSavedMovies={setSavedMovies} // Ensure you pass setSavedMovies prop here
-    />
-  }
-/>
+        <Route
+          path='/movies'
+          element={
+            <ProtectedRoute
+              element={Movies}
+              isSearched={isSearched}
+              loggedIn={isLoggedIn}
+              isLoading={isLoadingMovies}
+              movies={shortFilms} //Отправьте shortFilms вместо movies
+              onSaveClick={handleSaveMovie}
+              onDeleteClick={handleDeleteMovie}
+              onToggleClick={handleToggleClick}
+              shortsActive={shortsActive}
+              onSubmit={handleSearchMovies}
+              setErrorPopup={setErrorPopup}
+              setErrorText={setErrorText}
+            />
+          }
+        />
 
         <Route
-          path="/profile"
+          path='/saved-movies'
+          element={
+            <ProtectedRoute
+              element={SavedMovies}
+              loggedIn={isLoggedIn}
+              isSearched={isSearched}
+              savedMovies={savedShortFilms.filter(
+                (movie) => !savedShortsActive || movie.duration <= 40
+              )} // Only pass short films if short film setting is active
+              isLoading={isLoadingSavedMovies}
+              setLoadingSavedMovies={setLoadingSavedMovies}
+              onDeleteClick={handleDeleteMovie}
+              onToggleClick={handleToggleClick}
+              shortsActive={savedShortsActive} // Pass the short film setting state
+              setErrorPopup={setErrorPopup}
+              setErrorText={setErrorText}
+              onSubmit={handleSearchMovies}
+              setSavedMovies={setSavedMovies} // Ensure you pass setSavedMovies prop here
+              setSavedShortFilms={setSavedShortFilms}
+              setSavedShortsActive={setSavedShortsActive}
+            />
+          }
+        />
+
+        <Route
+          path='/profile'
           element={
             <ProtectedRoute
               element={Profile}
@@ -482,12 +513,7 @@ async function handleSearchMovies(keyword) {
           }
         />
 
-        <Route
-          path="*"
-          element={
-            <NotFoundPage/>
-          }
-        />
+        <Route path='*' element={<NotFoundPage />} />
       </Routes>
 
       <InfoTooltip
@@ -505,8 +531,6 @@ async function handleSearchMovies(keyword) {
         isOpen={isSucessPopup}
         onClose={closeAllPopups}
       />
-
-
     </CurrentUserContext.Provider>
   );
 }

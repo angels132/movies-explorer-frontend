@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './Profile.css';
 import Header from '../Header/Header';
+import { CurrentUserContext } from '../../context/CurrentUserContext';
 
 function Profile({
-                   currentUser,
-                   onSubmit,
-                   onSignOut,
-                   loggedIn,
-                   setErrorText,
-                   setErrorPopupOpen
-                 }) {
+  onSubmit,
+  onSignOut,
+  loggedIn,
+  setErrorText,
+  setErrorPopupOpen,
+}) {
+  const currentUser = useContext(CurrentUserContext);
   const [email, setEmail] = useState(currentUser.email);
   const [name, setName] = useState(currentUser.name);
 
@@ -43,11 +44,10 @@ function Profile({
       if (isNameValid(name) && isEmailValid(email)) {
         onSubmit({
           name: name,
-          email: email
+          email: email,
         });
         setSubmitActive(false);
-        setIsEditUser(false)
-
+        setIsEditUser(false);
       }
     } else {
       setErrorText('Веденные данные не должны совпадать с текущими');
@@ -91,19 +91,17 @@ function Profile({
 
   return (
     <main>
-      <Header
-        loggedIn={loggedIn}
-      />
-      <div className="profile">
-        <h1 className="profile__title">Привет, {currentUser.name}!</h1>
-        <form className="profile__form">
-          <div className="profile__input-container">
-            <p className="profile__input-name">Имя</p>
+      <Header loggedIn={loggedIn} />
+      <div className='profile'>
+        <h1 className='profile__title'>Привет, {currentUser.name}!</h1>
+        <form className='profile__form'>
+          <div className='profile__input-container'>
+            <p className='profile__input-name'>Имя</p>
             <input
-              className="profile__input"
-              type="text"
-              name="profile-input-name"
-              id="profile-input-name"
+              className='profile__input'
+              type='text'
+              name='profile-input-name'
+              id='profile-input-name'
               minLength={2}
               maxLength={30}
               required={true}
@@ -112,16 +110,20 @@ function Profile({
               noValidate
             />
           </div>
-          <span className={`profile__validation-error ${isNameValid(name) ?
-            '' :
-            'profile__validation-error_active'}`}>{nameError}</span>
-          <div className="profile__input-container">
-            <p className="profile__input-name">E-mail</p>
+          <span
+            className={`profile__validation-error ${
+              isNameValid(name) ? '' : 'profile__validation-error_active'
+            }`}
+          >
+            {nameError}
+          </span>
+          <div className='profile__input-container'>
+            <p className='profile__input-name'>E-mail</p>
             <input
-              className="profile__input"
-              type="email"
-              name="profile-input-email"
-              id="profile-input-email"
+              className='profile__input'
+              type='email'
+              name='profile-input-email'
+              id='profile-input-email'
               required={true}
               onChange={handleEmailChange}
               value={email}
@@ -129,39 +131,45 @@ function Profile({
               noValidate
             />
           </div>
-          <span className={`profile__validation-error ${isEmailValid(email) ?
-            '' :
-            'profile__validation-error_active'}`}>{emailError}</span>
-          {isEditUser ?
+          <span
+            className={`profile__validation-error ${
+              isEmailValid(email) ? '' : 'profile__validation-error_active'
+            }`}
+          >
+            {emailError}
+          </span>
+          {isEditUser ? (
             <div>
-              <span className="profile__error-message">При обновлении профиля произошла ошибка.</span>
+              <span className='profile__error-message'>
+                При обновлении профиля произошла ошибка.
+              </span>
               <button
-                type="submit"
+                type='submit'
                 onClick={handleSubmitChanges}
-                className={`${isSubmitActive ?
-                  'profile__submit-button' :
-                  'profile__submit-button_invalid'}`}
+                className={`${
+                  isSubmitActive
+                    ? 'profile__submit-button'
+                    : 'profile__submit-button_invalid'
+                }`}
                 disabled={false}
               >
                 Сохранить
               </button>
             </div>
-            :
-            <div className="porfile__btn-container">
+          ) : (
+            <div className='porfile__btn-container'>
               <button
-                className="profile__btn-edit"
-                form="profile__form"
-                onClick={handleIsEditUser}>
+                className='profile__btn-edit'
+                form='profile__form'
+                onClick={handleIsEditUser}
+              >
                 Редактировать
               </button>
-              <button
-                className="profile__btn-text"
-                onClick={onSignOut}
-              >
+              <button className='profile__btn-text' onClick={onSignOut}>
                 Выйти из аккаунта
               </button>
             </div>
-          }
+          )}
         </form>
       </div>
     </main>

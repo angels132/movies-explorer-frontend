@@ -27,11 +27,12 @@ function MoviesCard({ movie, onSaveClick, onDeleteClick, setErrorPopup, setError
         const hours = Math.floor(duration / 60);
         const minutes = duration % 60;
         if (hours > 0) {
-            return `${hours} ч ${minutes} мин`;
+            return `${hours} ч ${minutes} м`;
         }
-        return `${minutes} мин`;
+        return `${minutes} м`;
     }
-
+    console.log(isAdded);
+    
     const formatDurationTime = formatDuration(movie.duration);
 
     return (
