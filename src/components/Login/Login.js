@@ -11,6 +11,7 @@ function Login(props) {
   const [passwordError, setPasswordError] = useState('');
 
   const [isSubmitActive, setSubmitActive] = useState(false);
+  const [isSubmitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -34,9 +35,13 @@ function Login(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isEmailValid(email) && isPasswordValid(password)) {
+      setSubmitting(true);
       props.onSubmit({
         email: email,
         password: password
+      })
+      .finally(() => {
+        setSubmitting(false);
       });
     } else {
       setEmailError(isEmailValid(email) ? '' : 'Некорректный email');
@@ -107,7 +112,7 @@ function Login(props) {
         <span className={`login__error ${isPasswordValid(password) ?
           '' :
           'login__error_active'}`}>{passwordError}</span>
-        <button disabled={!isSubmitActive} className="login__submit-button"
+        <button disabled={!isSubmitActive || isSubmitting} className="login__submit-button"
                 type="submit">Войти
         </button>
       </form>

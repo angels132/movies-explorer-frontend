@@ -13,6 +13,8 @@ function Register(props) {
   const [passwordError, setPasswordError] = useState('');
 
   const [isSubmitActive, setSubmitActive] = useState();
+  const [isSubmitting, setSubmitting] = React.useState(false);
+
 
   const navigate = useNavigate();
 
@@ -45,10 +47,19 @@ function Register(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isNameValid(name) && isEmailValid(email) && isPasswordValid(password)) {
-      props.onSubmit({
-        name: name,
-        email: email,
-        password: password
+      setSubmitting(true);
+      new Promise((resolve, reject) => {
+        props.onSubmit({
+          name: name,
+          email: email,
+          password: password
+        })
+        .then(resolve)
+        .catch(reject);
+      })
+      .finally(() => {
+        // Unrelated to success or failure, we reset the submitting state back to `false`.
+        setSubmitting(false);
       });
     } else {
       setNameError(isNameValid(name) ? '' : 'Минимальная длина 2 символа');
@@ -139,7 +150,7 @@ function Register(props) {
         <span className={`register__error ${isPasswordValid(password) ?
           '' :
           'register__error_active'}`}>{passwordError}</span>
-        <button disabled={!isSubmitActive} className="register__submit-button"
+        <button disabled={!isSubmitActive || isSubmitting} className="register__submit-button"
                 type="submit">Зарегистрироваться
         </button>
       </form>

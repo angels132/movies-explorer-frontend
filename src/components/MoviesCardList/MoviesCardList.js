@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import Preloader from '../../components/Preloader/Preloader'
 import { useState, useEffect } from 'react';
 
-function MoviesCardList({ isLoading, onSaveClick, movies, onDeleteClick, setErrorPopup, setErrorText }) {
+function MoviesCardList({ isLoading, onSaveClick, movies, onDeleteClick, setErrorPopup, setErrorText, isSearched }) {
     const location = useLocation();
     const [visibleCards, setVisibleCards] = useState(12);
 
@@ -100,7 +100,7 @@ function MoviesCardList({ isLoading, onSaveClick, movies, onDeleteClick, setErro
                         ))}
                     </div>
                     :
-                    <h2 className="movies__no-movies-title">Ничего не найдено</h2>
+                    (isSearched && movies.length==0) && <h2 className="movies__no-movies-title">Ничего не найдено</h2>
             )}
             {movies && movies.length > visibleCards && !isLoading && (
                 <div className="more">

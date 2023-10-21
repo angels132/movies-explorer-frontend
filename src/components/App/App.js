@@ -66,10 +66,8 @@ function App() {
           setCurrentUser(userData);
           setLoggedIn(true);
 
-          // Добавьте этот блок кода ниже
           const movies = await moviesApi.getInitialMovies();
           localStorage.setItem('allMovies', JSON.stringify(movies));
-          setMovies(movies);
 
           return;
         }
@@ -133,9 +131,9 @@ function App() {
       setCurrentUser(user);
       setLoggedIn(true);
       await tokenCheckAndFetchMovies(); // добавлено ожидание получения фильмов из API
-      const storedMovies = JSON.parse(localStorage.getItem('allMovies'));
+      // const storedMovies = JSON.parse(localStorage.getItem('allMovies'));
 
-      setMovies(storedMovies);
+      // setMovies(storedMovies);
       navigate('/movies', { replace: true });
     } catch (err) {
       setErrorPopup(true);
@@ -305,30 +303,60 @@ useEffect(() => {
   }
 
 //поиск фильмов
-  async function handleSearchMovies(keyword) {
+  // async function handleSearchMovies(keyword) {
+  //   try {
+  //     if (location.pathname === '/movies') {
+  //       setLoadingMovies(true);
+  //       const movies = await moviesApi.getInitialMovies();
+  //       const findMovies = searchBy(movies, keyword);
+  //       const sortedMovies = sortMovies(findMovies, savedMovies);
+  //       const filteredMovies = filterShorts(sortedMovies, shortsActive);
+  //       localStorage.setItem('searchedMovies', JSON.stringify(filteredMovies));
+  //       setMovies((filteredMovies) || []);
+  //       setLoadingMovies(false);
+  //     } else if (location.pathname === '/saved-movies') {
+  //       setLoadingSavedMovies(true);
+  //       const saveUserMovies = JSON.parse(localStorage.getItem('savedMovies'));
+  //       const findMovies = searchBy(saveUserMovies, keyword);
+  //       setSavedMovies(filterShorts(findMovies, savedShortsActive) || []);
+  //       setLoadingSavedMovies(false);
+  //     }
+  //   } catch (err) {
+  //     setErrorPopup(true);
+  //     setErrorText(`${err}`);
+  //     console.log(err);
+  //   }
+  // }
+  const [isSearched, setIsSearched] = useState(false);
+
+async function handleSearchMovies(keyword) {
     try {
-      if (location.pathname === '/movies') {
-        setLoadingMovies(true);
-        const movies = await moviesApi.getInitialMovies();
-        const findMovies = searchBy(movies, keyword);
-        const sortedMovies = sortMovies(findMovies, savedMovies);
-        const filteredMovies = filterShorts(sortedMovies, shortsActive);
-        localStorage.setItem('searchedMovies', JSON.stringify(filteredMovies));
-        setMovies((filteredMovies) || []);
-        setLoadingMovies(false);
-      } else if (location.pathname === '/saved-movies') {
-        setLoadingSavedMovies(true);
-        const saveUserMovies = JSON.parse(localStorage.getItem('savedMovies'));
-        const findMovies = searchBy(saveUserMovies, keyword);
-        setSavedMovies(filterShorts(findMovies, savedShortsActive) || []);
-        setLoadingSavedMovies(false);
-      }
+        if (location.pathname === '/movies') {
+            setLoadingMovies(true);
+            await new Promise(resolve => setTimeout(resolve, 2000)); // для проверки загрузки preloader`a
+            const allMovies = JSON.parse(localStorage.getItem('allMovies'));
+            const findMovies = searchBy(allMovies, keyword);
+            const sortedMovies = sortMovies(findMovies, savedMovies);
+            const filteredMovies = filterShorts(sortedMovies, shortsActive);
+            localStorage.setItem('searchedMovies', JSON.stringify(filteredMovies));
+            setMovies((filteredMovies) || []);
+            setLoadingMovies(false);
+        } else if (location.pathname === '/saved-movies') {
+            setLoadingSavedMovies(true);
+            const saveUserMovies = JSON.parse(localStorage.getItem('savedMovies'));
+            const findMovies = searchBy(saveUserMovies, keyword);
+            setSavedMovies(filterShorts(findMovies, savedShortsActive) || []);
+            setLoadingSavedMovies(false);
+        }
     } catch (err) {
-      setErrorPopup(true);
-      setErrorText(`${err}`);
-      console.log(err);
-    }
-  }
+        setErrorPopup(true);
+        setErrorText(`${err}`);
+        console.log(err);
+    } finally {
+    setIsSearched(true); // Добавлено в finally, чтобы обрабатывать и успешные, и неудачные запросы
+}
+
+}
 
   useEffect(() => {
     //TODO try catch

@@ -1,5 +1,5 @@
-export const BASE_URL = "https://api.miku.nomoredomainsrocks.ru";
-//export const BASE_URL = 'http://localhost:3000';
+//export const BASE_URL = "https://api.miku.nomoredomainsrocks.ru";
+export const BASE_URL = 'http://localhost:3000';
 
 const getJson = async (res) => {
     if (res.ok) {
